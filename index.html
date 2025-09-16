@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>コーツトカフェガチャ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 1.5em;
+      margin: 0;
+      background: #fefefe;
+    }
+    h1 {
+      font-size: 1.3em;
+      margin-bottom: 0.5em;
+    }
+    .subtext {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 2em;
+    }
+    #gachaIcon {
+      width: 30vw;
+      max-width: 120px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    #gachaIcon:hover {
+      transform: scale(1.1);
+    }
+    #result {
+      margin-top: 2em;
+      font-size: 1em;
+      font-weight: bold;
+      line-height: 1.5;
+      white-space: pre-line;
+      padding: 0 1em;
+    }
+  </style>
+</head>
+    
+<body>
+  <h1> コーツトカフェガチャ</h1>
+  <p class="subtext">アイコンをタップしてね</p>
+
+  <!-- ガチャアイコン -->
+  <div>
+    <img src="./icon_gacha.png" alt="ガチャを回す" id="gachaIcon" onclick="pickRandom()">
+  </div>
+ 
+  <audio id="doorSound" src="./door.mp3" preload="auto"></audio>
+  
+  <!-- 結果表示 -->
+  <div id="result"></div>
+
+  <script>
+    let data = [];
+
+    // CSVファイルを自動読み込み
+   fetch('./menu.csv')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('CSVファイルの読み込みに失敗しました');
+    }
+    return response.text();
+  })
+  .then(text => {
+    const lines = text.trim().split('\n').slice(1); // ヘッダー除去
+    data = lines.map(line => {
+      const [menu, comment, mood] = line.trim().split(',');
+      return { menu, comment, mood };
+    }).filter(item => item.menu && item.comment && item.mood);
+    console.log('CSV読み込み成功:', data);
+  })
+  .catch(error => {
+    console.error('CSV読み込みエラー:', error);
+    document.getElementById('result').innerText = '⚠️ メニューの読み込みに失敗しました';
+  });
+
+// ガチャを回す処理
+function pickRandom() {
+  if (data.length === 0) {
+    document.getElementById('result').innerText = '⚠️ メニューが読み込まれていません';
+    return;
+  }
+  
+  // ドアベルの音を再生
+  const sound = document.getElementById('doorSound');
+  sound.currentTime = 0; // 毎回最初から再生
+  sound.play().catch(error => {
+   console.error('音声再生エラー:', error);
+  });
+  const item = data[Math.floor(Math.random() * data.length)];
+  document.getElementById('result').innerText = `「${item.menu}」\n${item.comment}\n ${item.mood}`;
+} 
+  </script>
+</body>
+</html>
