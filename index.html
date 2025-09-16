@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>カフェガチャ</title>
+//タイトルはここで書き換えます  
+<title>カフェガチャ</title>
   <style>
     body {
       font-family: sans-serif;
@@ -87,7 +88,7 @@ function pickRandom() {
     return;
   }
   
-  // ドアベルの音を再生
+  // アイコンをタップの音を再生
   const sound = document.getElementById('doorSound');
   sound.currentTime = 0; // 毎回最初から再生
   sound.play().catch(error => {
